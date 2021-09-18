@@ -39,22 +39,21 @@ summary(model)
 # Automatic Backward Elimination
 backwardElimination <- function(dataset, significance_level) {
   numOfVars <- length(dataset)
-  print(numOfVars)
-  
+
   for (i in c(1 : numOfVars)){
+    # TODO: parameterize dependent var (Profit)
     model <- lm(formula = Profit ~ ., data = dataset)
-    # FIX: pValues not include last var
-    pValues <- coef(summary(model))[c(2 : (numOfVars + 0)), "Pr(>|t|)"]
-    # print(pValues)
+    # FIX: pValues missing last var
+    pValues <- coef(summary(model))[c(2 : numOfVars), "Pr(>|t|)"]
     maxPValue <- max(pValues)
     
     if (maxPValue > significance_level){
       varToEliminate <- which(pValues == maxPValue)
-      dataset <- dataset[, -varToEliminate]
+      dataset <- dataset[, -(varToEliminate)]
       numOfVars <- numOfVars - 1
     }
   }
-  # return(summary(model))
+  return(summary(model))
 }
 # Usage:
 SL = 0.05
